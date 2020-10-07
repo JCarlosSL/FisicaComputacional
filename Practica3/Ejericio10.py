@@ -22,8 +22,6 @@ def getPoint(px,pv,pa,v,h=0.01,t=10):
     pt = np.arange(0,t,h)
     for i in pt:
         (px,pv,pa,v) = Euler(px,pv,pa,v,h)
-        a=np.sqrt(np.power(pa[0],2)+np.power(pa[1],2))
-        print("Fuerza :",m*a)
         if(px[1]<=0): break
         vp.append(px)
         vv.append(pv)
@@ -44,9 +42,10 @@ pa = np.array([0,0])
 px = np.array([x,y])
 pv = np.array([vx,vy])
 
-#### para poder ver los dos casos   comenta k=0 y descomenta el otro
-k=0
-#k=(C,0.1,p,m)
+# para poder ver los dos casos   comenta k=0 y descomenta el otro
+#k=0
+A=np.pi*(r**2)
+k=K(C,A,p,m)
 
 (vp,vv,va,pt) = getPoint(px,pv,pa,v,0.0001,10)
 

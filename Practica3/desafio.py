@@ -1,55 +1,53 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def pointinit(angle,r):
-    x = np.cos(angle)*r
-    y = np.sin(angle)*r
-    return x,y
+def velocidad(vx,vy):
+    return np.sqrt(pow(vx,2)+pow(vy,2))
 
-def pointvelo(angle):
-    x = -4*np.cos(angle)
-    y = 4 * np.cos(angle)
-    return x,y
+def K(C,A,p,m):
+    return (1/2) * ((C*A*p)/m)
 
-def AceleCentri(pa,px,r):
-    return -pa/r*px
-
-def Euler(px,pv,pa,r,h=0.01):
-    pa = AceleCentri(2,px,r);
+def Euler(px,pv,pa,v,h=0.01):
+    v=velocidad(pv[0],pv[1])
+    pa = np.array([-k*v*pv[0],-10-k*v*pv[1]])
     px = px + pv*h
     pv = pv + pa*h
-    return (px,pv,pa) 
+    return (px,pv,pa,v) 
 
-def getPoint(px,pv,pa,r,h=0.01,t=10):
+def getPoint(px,pv,pa,v,h=0.01,t=10):
     vp = []
     vv = []
     va = []
 
     pt = np.arange(0,t,h)
     for i in pt:
-        (px,pv,pa) = Euler(px,pv,pa,r,h)
-        a=np.sqrt(np.power(pa[0],2)+np.power(pa[1],2))
-        print("Fuerza {}",m*a)
+        (px,pv,pa,v) = Euler(px,pv,pa,v,h)
+        if(px[1]<=0): break
         vp.append(px)
         vv.append(pv)
         va.append(pa)
     return (np.array(vp),np.array(vv),
             np.array(va),np.array(pt))
 
-#x=-1 y=2
-a = 2 # m/s
-r = 8 # m
-m = 5 # kg
+r = 0.5 # m
+m = 1/pow(10,8) # kg
 h = 0.1
-v = 4 # m/s
+v = 14 # m/s
+C = 0.8 #coeficiente de arrastre
+p = 1000 # kg/m^3
 
-x,y = pointinit(np.pi/4,r)
-vx,vy = pointvelo(np.pi/4)
-pa = np.array([0,0])
-px = np.array([x,y])
+#ac = r*v
+vx,vy = np.cos(0)*v,np.sin(0)*v #angle de 60
+pa = np.array([0,-10])
+px = np.array([0,1.6])
 pv = np.array([vx,vy])
 
-(vp,vv,va,pt) = getPoint(px,pv,pa,r,0.0001,13)
+# para poder ver los dos casos   comenta k=0 y descomenta el otro
+#k=0
+A = np.pi*(r**2)
+k=K(C,A,p,m)
+
+(vp,vv,va,pt) = getPoint(px,pv,pa,v,0.01,20)
 
 #plt.subplot(2,3,5)
 #print(vp)
